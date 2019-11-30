@@ -7,6 +7,7 @@
 # intellij idea
 .idea*
 .metals*
+.bloop*
 
 # sbt specific
 project/credentials.sbt
