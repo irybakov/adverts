@@ -6,12 +6,12 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import scala.concurrent.Await
-import kz.adverts.routing.RestRoutes
+import kz.adverts.routing.{RestRoutes,AdvertsService}
 import scala.util.{Failure, Success, Try}
-import scala.io.StdIn
+import kz.adverts.repo.AdvertsRepository
 
 
-object Boot extends App with RestRoutes {
+object Boot extends App  {
 
     implicit val system = ActorSystem("adverts-system")
     implicit val materializer = ActorMaterializer()
@@ -20,9 +20,13 @@ object Boot extends App with RestRoutes {
 
     val host = "0.0.0.0"
     val port = 8080
-    val bindingFuture = Http().bindAndHandle(route, host, port)
 
-    println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
+    val repo = AdvertsRepository.props
+    val service = AdvertsService.props(repo)
+
+    val bindingFuture = Http().bindAndHandle(service.route, host, port)
+
+    println(s"Server online at http://localhost:8080/\nPress ^C to stop...")
       
     bindingFuture.onComplete {
         case Success(_) => println("Success!")
