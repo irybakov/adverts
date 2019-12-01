@@ -14,7 +14,7 @@ class AdvertsRepositorySpec extends FlatSpec with Matchers {
     "CRUD for repository" should "save NewCar to empty list" in {   
         val repo = AdvertsRepository.props
 
-        val newCar = CreateAdvert("Audi A4 Avant",Fuel.Gasoline,1000,true,None,None)
+        val newCar = CreateAdvert("Audi A4 Avant",Fuel.Gasoline.toString(),1000,true,None,None)
         repo.save(newCar)
         val items = repo.all()
           
@@ -30,7 +30,7 @@ class AdvertsRepositorySpec extends FlatSpec with Matchers {
     it should "save UsedCar to empty list" in {
         val repo = AdvertsRepository.props
 
-        val usedCar = CreateAdvert("Audi A4 Avant",Fuel.Gasoline,1000,false,Some(10000),Some(1575126012644L))
+        val usedCar = CreateAdvert("Audi A4 Avant",Fuel.Gasoline.toString(),1000,false,Some(10000),Some(1575126012644L))
         repo.save(usedCar)
         val items = repo.all()
           
@@ -51,16 +51,16 @@ class AdvertsRepositorySpec extends FlatSpec with Matchers {
     it should "update UsedCar" in {
         val repo = AdvertsRepository.props
 
-        val usedCar = CreateAdvert("Audi A4 Avant",Fuel.Gasoline,1000,false,Some(10000),Some(1575126012644L))
+        val usedCar = CreateAdvert("Audi A4 Avant",Fuel.Gasoline.toString(),1000,false,Some(10000),Some(1575126012644L))
         val item = repo.save(usedCar)
         item.onComplete {
             case Success(value) => {
-                val update = UpdateAdvert(title = Some("BMW i3"),fuel = Some(Fuel.Diesel),None,None,None)
+                val update = UpdateAdvert(title = Some("BMW i3"),fuel = Some(Fuel.Diesel.toString()),None,None,None)
                 val result = repo.update(value.id,update)
 
                 result.onComplete {
                     case Success(value) => {
-                        val target = value.asInstanceOf[UsedCar]
+                        val target = value.asInstanceOf[CarAdvert]
                         assert(target.id == value.id)
                         assert(target.title == update.title.get)
                         assert(target.fuel== update.fuel.get)
@@ -74,16 +74,16 @@ class AdvertsRepositorySpec extends FlatSpec with Matchers {
     }
     it should "update NewCar" in {
         val repo = AdvertsRepository.props
-        val newCar = CreateAdvert("Audi A4 Avant",Fuel.Gasoline,1000,true,None,None)
+        val newCar = CreateAdvert("Audi A4 Avant",Fuel.Gasoline.toString(),1000,true,None,None)
         val item = repo.save(newCar)
         item.onComplete {
             case Success(value) => {
-                val update = UpdateAdvert(title = Some("BMW i3"),fuel = Some(Fuel.Diesel),None,None,None)
+                val update = UpdateAdvert(title = Some("BMW i3"),fuel = Some(Fuel.Diesel.toString()),None,None,None)
                 val result = repo.update(value.id,update)
 
                 result.onComplete {
                     case Success(value) => {
-                        val target = value.asInstanceOf[NewCar]
+                        val target = value.asInstanceOf[CarAdvert]
                         assert(target.id == value.id)
                         assert(target.title == update.title.get)
                         assert(target.fuel== update.fuel.get)
@@ -98,10 +98,12 @@ class AdvertsRepositorySpec extends FlatSpec with Matchers {
     it should "get All" in {
         val repo = AdvertsRepository.props
 
-        val usedCar = CreateAdvert("Audi A4 Avant",Fuel.Gasoline,1000,false,Some(10000),Some(1575126012644L))
-        repo.save(usedCar)
+        val usedCar = CreateAdvert("Audi A4 Avant",Fuel.Gasoline.toString(),1000,false,Some(10000),Some(1575126012644L))
+        val car = repo.save(usedCar).onComplete {
+            case Success(value) => value.asInstanceOf[UsedCar]
+        }
 
-        val newCar = CreateAdvert("BMW  i3",Fuel.Gasoline,1000,true,None,None)
+        val newCar = CreateAdvert("BMW  i3",Fuel.Gasoline.toString(),1000,true,None,None)
         repo.save(newCar)   
 
         val items= repo.all()

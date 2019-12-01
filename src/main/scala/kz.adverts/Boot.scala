@@ -16,7 +16,7 @@ object Boot extends App  {
     implicit val system = ActorSystem("adverts-system")
     implicit val materializer = ActorMaterializer()
     
-    implicit val executionContext = system.dispatcher
+    implicit val ec = system.dispatcher
 
     val host = "0.0.0.0"
     val port = 8080

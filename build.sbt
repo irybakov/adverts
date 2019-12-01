@@ -1,6 +1,6 @@
 import com.typesafe.sbt.packager.docker.ExecCmd
 
-enablePlugins(JavaAppPackaging,AshScriptPlugin)
+enablePlugins(JavaAppPackaging, AshScriptPlugin)
 
 dockerBaseImage := "openjdk:8-jre-alpine"
 
@@ -10,12 +10,18 @@ version := "0.1.1"
 
 scalaVersion := "2.13.1"
 
+val akkaHttpVersion = "10.1.10"
+val akkaVersion = "2.6.0"
+
 libraryDependencies ++= Seq(
-    "com.typesafe.akka" %% "akka-http"   % "10.1.10", 
-    "com.typesafe.akka" %% "akka-stream" % "2.5.23",
-    "de.heikoseeberger" %% "akka-http-circe" % "1.29.1",
-    "io.circe" %% "circe-core" % "0.12.3",
-    "io.circe" %% "circe-generic" % "0.12.3",
-    "io.circe" %% "circe-parser" % "0.12.3",
+    "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+    "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
+    "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+    "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
+    "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+    "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
+
+    "de.heikoseeberger" %% "akka-http-json4s" % "1.29.1",
+    "org.json4s" %% "json4s-native" % "3.6.7",
     "org.scalatest" %% "scalatest" % "3.0.8" % "test"
 )
